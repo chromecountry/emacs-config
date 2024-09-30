@@ -8,8 +8,6 @@
 
 (menu-bar-mode -1)	; Disable the menu bar
 
-(load-theme 'wombat)
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -30,6 +28,16 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(column-number-mode)
+(global-display-line-numbers-mode t)
+
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+		term-mode-hook
+		shell-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (use-package command-log-mode)
 
@@ -52,6 +60,16 @@
   :config
   (ivy-mode 1))
 
+;; Enrich Ivy interface
+(use-package ivy-rich
+     :init
+     (ivy-rich-mode 1))
+
+(global-set-key (kbd "C-M-s") 'counsel-switch-buffer)
+
+;; You will need to run M-x all-the-icons-install-fonts 
+(use-package all-the-icons)
+
 ;; Initialize counsel with custom key bindings
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
@@ -66,6 +84,23 @@
   :ensure t
   :init (doom-modeline-mode 1))
 
+(use-package doom-themes
+  :init (load-theme 'doom-monokai-machine t))
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-varibale] . counsel-describe-variable)
+  ([remap describe-command] . counsel-describe-command)
+  ([remap describe-key] . helpful-key))
+
+(use-package general)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
