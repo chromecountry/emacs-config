@@ -80,6 +80,7 @@
 :config
 (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
 
+;; Doom configurations
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
@@ -89,6 +90,13 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+;; Describe what keys are available after a given binding
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3)) ;; Configure the delay for the menu.
 
 (use-package helpful
   :custom
