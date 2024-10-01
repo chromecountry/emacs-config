@@ -67,8 +67,13 @@
 
 (global-set-key (kbd "C-M-s") 'counsel-switch-buffer)
 
-;; You will need to run M-x all-the-icons-install-fonts 
-(use-package all-the-icons)
+(use-package nerd-icons
+  :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+ )
 
 ;; Initialize counsel with custom key bindings
 (use-package counsel
@@ -85,8 +90,8 @@
   :ensure t
   :init (doom-modeline-mode 1))
 
-(use-package doom-themes
-  :init (load-theme 'doom-monokai-machine t))
+;; (use-package doom-themes
+;;  :init (load-theme 'doom-monokai-machine t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -110,13 +115,40 @@
 
 (use-package general)
 
+(use-package hydra)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom (projectile-completion-system 'ivy)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/lab")
+    (setq projectile-project-search-path '("~/lab")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(doom-modeline counsel ivy yasnippet-snippets volatile-highlights use-package latex-extra company command-log-mode auto-complete)))
+   '(magit counsel-projectile projectile hydra doom-modeline counsel ivy yasnippet-snippets volatile-highlights use-package latex-extra company command-log-mode auto-complete)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
