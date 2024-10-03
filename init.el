@@ -41,6 +41,9 @@
 
 (use-package command-log-mode)
 
+(use-package no-littering)
+(require 'no-littering)
+
 ;; Initialize ivy with custom key bindings
 (use-package ivy
   :diminish
@@ -142,13 +145,15 @@
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+(use-package org)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(magit counsel-projectile projectile hydra doom-modeline counsel ivy yasnippet-snippets volatile-highlights use-package latex-extra company command-log-mode auto-complete)))
+   '(no-littering doom-modeline counsel ivy yasnippet-snippets volatile-highlights use-package latex-extra company command-log-mode auto-complete)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
