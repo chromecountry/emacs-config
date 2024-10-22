@@ -320,16 +320,21 @@ mouse-3: Open %S in another window"
   (progn
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
+  (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
   (global-set-key "\C-s" 'swiper)
   (global-set-key (kbd "C-c C-r") 'ivy-resume)
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-  (global-set-key (kbd "C-M-s") 'counsel-switch-buffer)
-  ))
+  (global-set-key (kbd "C-M-s") 'counsel-switch-buffer))
 
 (use-package ivy-rich
    :init
    (ivy-rich-mode 1)) ; Enrich ivy interface
+
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                HL-LINE                 ;;
@@ -357,6 +362,20 @@ mouse-3: Open %S in another window"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (ac-config-default) 			; standard ac config
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                   HELPFUL              ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-varibale] . counsel-describe-variable)
+  ([remap describe-command] . counsel-describe-command)
+  ([remap describe-key] . helpful-key))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;               FLY-SPELL                ;;

@@ -1,4 +1,4 @@
-e#+PROPERTY: header-args:emacs-lisp :tangle config.el
+#+PROPERTY: header-args:emacs-lisp :tangle config.el
 #+STARTUP: show2levels indent hidestars  
 
 * Core
@@ -111,7 +111,7 @@ User Settings:
 #+end_src
 
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/User-Identification.html][See Documentation.]]
-   
+
 ** Startup
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -438,8 +438,7 @@ Improved searching and file browsing experience.
     (global-set-key (kbd "C-c C-r") 'ivy-resume)
     (global-set-key (kbd "M-x") 'counsel-M-x)
     (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-    (global-set-key (kbd "C-M-s") 'counsel-switch-buffer)
-    ))
+    (global-set-key (kbd "C-M-s") 'counsel-switch-buffer))
 
   (use-package ivy-rich
      :init
@@ -533,7 +532,6 @@ Spell checking through flyspell
       (add-hook hook (lambda () (flyspell-mode 1))))
   (setq flyspell-issue-message-flag nil)
 #+end_src
-
 ** undo-tree
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
