@@ -98,8 +98,12 @@
 
 (setq frame-title-format "%b : %f") 	        ; file : path
 
-(require 'linum)
-(setq linum-format 'dynamic)		; right-aligned numbers
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(term-mode-hook
+		shell-mode-hook
+		eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (setq-default cursor-type 'bar)	        	; Enable bar cursor
 (setq line-number-mode t)		        ; Enable line-number-mode
@@ -454,148 +458,13 @@ mouse-3: Open %S in another window"
 (global-set-key [f4] 'insert-time)
 (global-set-key [f5] 'insert-time-and-date)
 
-(global-unset-key "\C-z")
-
-(global-unset-key "\C-c\C-r")
-(global-set-key "\C-c\C-d"         'delete-horizontal-space)
 (global-set-key (kbd "<escape>")   'keyboard-escape-quit)
-
-(global-set-key "\C-h"             'delete-backward-char)
-(global-set-key "\M-h"             'backward-kill-word)
-
-(global-set-key "\M-s"             'occur)
-(global-set-key "\M-o"             'other-window)
-
-(defun up-one () (interactive) (scroll-up 1))
-(defun down-one () (interactive) (scroll-down 1))
-
-(defun this-line-to-top-of-window (line)
-  "Reposition line point is on to top of window.
-  With ARG, put point on line ARG.
-  Negative counts from bottom."
-  (interactive "P")
-  (recenter (if (null line) 0 (prefix-numeric-value line)))
-)
-
-(global-set-key [(shift control l)]    'this-line-to-top-of-window)
-(global-set-key [(shift control n)]    'up-one)
-(global-set-key [(shift control p)]    'down-one)
-
-;; text zoom
-(global-set-key [C-mouse-4]            'text-scale-increase)
-(global-set-key [C-mouse-5]            'text-scale-decrease)
-
-;; move horizontal lines
-(defun move-line-up ()
-  "Move up the current line."
-  (interactive)
-  (transpose-lines 1)
-  (forward-line -2)
-  (indent-according-to-mode))
-
-(defun move-line-down ()
-  "Move down the current line."
-  (interactive)
-  (forward-line 1)
-  (transpose-lines 1)
-  (forward-line -1)
-  (indent-according-to-mode))
-
-(global-set-key [(control shift up)] 'move-line-up)
-(global-set-key [(control shift down)] 'move-line-down)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
 (if (file-readable-p  "~/.emacs.d/.ergo/user/user-config.el")
   (progn (load  "~/.emacs.d/.ergo/user/user-config.el")))
-
-;;
-;; Emacs setup for Ledger.
-;;
-
-(require 'beancount)
-
-;; Automatically open .beancount files in beancount-mode.
-(add-to-list 'auto-mode-alist '("\\.beancount$" . beancount-mode))
-
-;; Support parsing Python logging errors, with a suitable logging.basicConfig()
-;; format.
-(unless (assq 'python-logging compilation-error-regexp-alist-alist)
-
-  (add-to-list
-   'compilation-error-regexp-alist-alist
-   '(python-logging "\\(ERROR\\|WARNING\\):\\s-*\\([^:]+\\):\\([0-9]+\\)\\s-*:" 2 3))
-
-  (add-to-list
-   'compilation-error-regexp-alist 'python-logging)
-  )
-
-
-;; Experimental: Bind a key to reformat the entire file using bean-format.
-(defun beancount-format-file ()
-  (interactive)
-  (let ((line-no (line-number-at-pos)))
-      (call-process-region (point-min) (point-max) "bean-format" t (current-buffer))
-      (goto-line line-no)
-      (recenter)
-      ))
-
-;; Make sure we don't accidentally pick up ;;; as headers. Use org section headers only.
-(setq beancount-outline-regexp "\\(\\*+\\)")
-(setq beancount-number-alignment-colum 77)
-;; Disable auto-indent.
-(defun disable-electric-indent ()
-  (setq-local electric-indent-chars nil))
-(add-hook 'beancount-mode-hook #'disable-electric-indent)
-
-;; `beancount-number-alignment-column`. Setting it to 0 will cause the
-;; alignment column to be determined from file content.  Postings in
-;; transactions are indented with `beancount-transaction-indent` spaces.
-
-
-(defadvice shell-quote-argument (around dont-quote-already-quoted-args activate)
-  "Avoid quoting argument if it's already quoted."
-  (let ((arg (ad-get-arg 0)))
-    (setq ad-return-value
-          (if (or (string-match "\".*\"$" arg)
-                  (string-match "\'.*\'$" arg))
-              arg ad-do-it))))
-
-(defvar beancount-journal-command
-  (concat
-   "select date, flag, maxwidth(description, 80), position, balance "
-   "where account = '%s'"))
-
-(defun beancount-query-journal-at-point ()
-  "Run a journal command for the account at point."
-  (interactive)
-  (let* ((account (thing-at-point 'beancount-account))
-         (sql (concat "\"" (format beancount-journal-command account) "\"")))
-    (beancount--run beancount-query-program
-                    (file-relative-name buffer-file-name)
-                    sql)))
-
-;; TODO: Refine this a bit later on.
-(defvar beancount-balance-command
-  (concat
-   "select account, sum(position) "
-   "where account ~ '%s' "
-   "group by 1 "
-   "order by 1"))
-
-(defun beancount-query-balance-at-point ()
-  "Run a balance command for the account at point."
-  (interactive)
-  (let* ((account (thing-at-point 'beancount-account))
-         (sql (concat "\"" (format beancount-balance-command account) "\"")))
-    (beancount--run beancount-query-program
-                    (file-relative-name buffer-file-name)
-                    sql)))
-
-(add-hook 'beancount-mode-hook #'linum)	             ; Require Linum 
-(add-hook 'beancount-mode-hook #'hl-line-mode)       ; Require HL-Line
-(add-hook 'beancount-mode-hook #'outline-minor-mode) ; Require Outline
 
 (require 'org-tempo)
 (add-to-list 'org-structure-template-alist
