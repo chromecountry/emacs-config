@@ -448,6 +448,13 @@ Improved searching and file browsing experience.
 
 [[https://github.com/abo-abo/swiper][See Documentation.]]
 
+** magit
+#+begin_src emacs-lisp
+(use-package magit
+  :commands (magit-status magit-get-current-branch)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+#+end_src
 ** hl-line
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -495,6 +502,24 @@ Auto Tangle this file on save.
   (ac-config-default) 			; standard ac config
 #+end_src
 
+** helpful
+#+begin_src emacs-lisp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                   HELPFUL              ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-varibale] . counsel-describe-variable)
+  ([remap describe-command] . counsel-describe-command)
+  ([remap describe-key] . helpful-key))
+#+end_src
 ** flyspell
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -593,13 +618,6 @@ Insert the date, the time, and the date and time at point.
 (global-set-key [f3] 'insert-date)
 (global-set-key [f4] 'insert-time)
 (global-set-key [f5] 'insert-time-and-date)
-#+end_src
-** magit
-#+begin_src emacs-lisp
-(use-package magit
-  :commands (magit-status magit-get-current-branch)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 #+end_src
 ** keybindings
 Custom Key Bindings
