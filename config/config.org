@@ -523,6 +523,14 @@ Auto Tangle this file on save.
   ([remap describe-command] . counsel-describe-command)
   ([remap describe-key] . helpful-key))
 #+end_src
+** which-key
+#+begin_src emacs-lisp
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3)) ;; Configure the delay for the menu.
+#+end_src
 ** flyspell
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

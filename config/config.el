@@ -381,6 +381,12 @@ mouse-3: Open %S in another window"
   ([remap describe-command] . counsel-describe-command)
   ([remap describe-key] . helpful-key))
 
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3)) ;; Configure the delay for the menu.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;               FLY-SPELL                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
