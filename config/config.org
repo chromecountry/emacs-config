@@ -544,6 +544,22 @@ Spell checking through flyspell
       (add-hook hook (lambda () (flyspell-mode 1))))
   (setq flyspell-issue-message-flag nil)
 #+end_src
+** projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :custom (projectile-completion-system 'ivy)
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    (when (file-directory-p "~/lab")
+      (setq projectile-project-search-path '("~/lab")))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+  (use-package counsel-projectile
+  :config (counsel-projectile-mode))
+#+end_src
 ** undo-tree
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

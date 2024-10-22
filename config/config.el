@@ -395,6 +395,20 @@ mouse-3: Open %S in another window"
     (add-hook hook (lambda () (flyspell-mode 1))))
 (setq flyspell-issue-message-flag nil)
 
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom (projectile-completion-system 'ivy)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/lab")
+    (setq projectile-project-search-path '("~/lab")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+:config (counsel-projectile-mode))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;               UNDO-TREE                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
