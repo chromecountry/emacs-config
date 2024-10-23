@@ -154,6 +154,12 @@ Frame Settings:
   (setq frame-title-format "%b : %f") 	        ; file : path 
 #+end_src
 
+**** Initial Frame Size
+#+begin_src emacs-lisp
+(setq initial-frame-alist
+       '((top . 1) (left . 1) (width . 100) (height . 55)))
+#+end_src
+
 **** Line Numbers
 Line Number Settings:
  - Line Style: line numbers enabled on LHS 
@@ -238,7 +244,14 @@ Mode-Line Settings:
  )
 #+end_src
 
-[[https://www.reddit.com/r/emacs/comments/6ftm3x/share_your_modeline_customization/][See Documentation.]]
+[[https://www.reddit.com/r/emacs/comments/6ftm3x/share_your_modeline_customization/][See
+Documentation.]]
+*** Font
+Font Settings:
+#+begin_src emacs-lisp
+  (set-frame-font "Droid Sans Mono Slashed 14" nil t)
+  (set-face-attribute 'fixed-pitch nil :font "Droid Sans Mono Slashed 14")
+#+end_src
 * Further Customization
 #+begin_src emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -652,14 +665,20 @@ Custom Key Bindings
 #+end_src
 ** electric
 #+begin_src emacs-lisp
-(electric-pair-mode 1)
-(add-hook 'python-mode-hook
-              (lambda ()
-                (define-key python-mode-map "\"" 'electric-pair)
-                (define-key python-mode-map "\'" 'electric-pair)
-                (define-key python-mode-map "(" 'electric-pair)
-                (define-key python-mode-map "[" 'electric-pair)
-                (define-key python-mode-map "{" 'electric-pair)))
+(defun electric-pair ()
+      "If at end of line, insert character pair without surrounding spaces.
+    Otherwise, just insert the typed character."
+      (interactive)
+      (if (eolp) (let (parens-require-spaces) (insert-pair)) (self-insert-command 1)))
+
+  
+  (add-hook 'python-mode-hook
+                (lambda ()
+                  (define-key python-mode-map "\"" 'electric-pair)
+                  (define-key python-mode-map "\'" 'electric-pair)
+                  (define-key python-mode-map "(" 'electric-pair)
+                  (define-key python-mode-map "[" 'electric-pair)
+                  (define-key python-mode-map "{" 'electric-pair)))
 #+end_src
 ** misc.
 Set emacs browser. This configuration only works on MacOS

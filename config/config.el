@@ -98,6 +98,9 @@
 
 (setq frame-title-format "%b : %f") 	        ; file : path
 
+(setq initial-frame-alist
+       '((top . 1) (left . 1) (width . 100) (height . 55)))
+
 (global-display-line-numbers-mode t)
 ;; Disable line numbers for some modes
 (dolist (mode '(term-mode-hook
@@ -154,6 +157,9 @@
  ;; but you can use any other Nerd Font if you want
  (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
+
+(set-frame-font "Droid Sans Mono Slashed 14" nil t)
+(set-face-attribute 'fixed-pitch nil :font "Droid Sans Mono Slashed 14")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                               ADVANCED SETTINGS                                ;;
@@ -480,14 +486,20 @@ mouse-3: Open %S in another window"
 
 (global-set-key (kbd "<escape>")   'keyboard-escape-quit)
 
-(electric-pair-mode 1)
-(add-hook 'python-mode-hook
-              (lambda ()
-                (define-key python-mode-map "\"" 'electric-pair)
-                (define-key python-mode-map "\'" 'electric-pair)
-                (define-key python-mode-map "(" 'electric-pair)
-                (define-key python-mode-map "[" 'electric-pair)
-                (define-key python-mode-map "{" 'electric-pair)))
+(defun electric-pair ()
+      "If at end of line, insert character pair without surrounding spaces.
+    Otherwise, just insert the typed character."
+      (interactive)
+      (if (eolp) (let (parens-require-spaces) (insert-pair)) (self-insert-command 1)))
+
+  
+  (add-hook 'python-mode-hook
+                (lambda ()
+                  (define-key python-mode-map "\"" 'electric-pair)
+                  (define-key python-mode-map "\'" 'electric-pair)
+                  (define-key python-mode-map "(" 'electric-pair)
+                  (define-key python-mode-map "[" 'electric-pair)
+                  (define-key python-mode-map "{" 'electric-pair)))
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
