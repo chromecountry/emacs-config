@@ -650,7 +650,17 @@ Custom Key Bindings
 #+begin_src emacs-lisp
 (global-set-key (kbd "<escape>")   'keyboard-escape-quit)
 #+end_src
-
+** electric
+#+begin_src emacs-lisp
+(electric-pair-mode 1)
+(add-hook 'python-mode-hook
+              (lambda ()
+                (define-key python-mode-map "\"" 'electric-pair)
+                (define-key python-mode-map "\'" 'electric-pair)
+                (define-key python-mode-map "(" 'electric-pair)
+                (define-key python-mode-map "[" 'electric-pair)
+                (define-key python-mode-map "{" 'electric-pair)))
+#+end_src
 ** misc.
 Set emacs browser. This configuration only works on MacOS
 #+begin_src emacs-lisp
@@ -662,6 +672,27 @@ Load user settings if available
 #+begin_src emacs-lisp
     (if (file-readable-p  "~/.emacs.d/.ergo/user/user-config.el")
       (progn (load  "~/.emacs.d/.ergo/user/user-config.el")))
+#+end_src
+
+Remember recently edited files
+#+begin_src emacs-lisp
+(recentf-mode 1)
+#+end_src
+
+Save last cursor location in file when closed
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+
+Save what you enter into minibuffer prompts
+#+begin_src emacs-lisp
+(setq history-length 25)
+(savehist-mode 1)
+#+end_src
+
+Revert buffers when underlying file changes
+#+begin_src emacs-lisp
+(global-auto-revert-mode 1)
 #+end_src
 
 * Language Support

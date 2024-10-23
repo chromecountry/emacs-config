@@ -480,11 +480,29 @@ mouse-3: Open %S in another window"
 
 (global-set-key (kbd "<escape>")   'keyboard-escape-quit)
 
+(electric-pair-mode 1)
+(add-hook 'python-mode-hook
+              (lambda ()
+                (define-key python-mode-map "\"" 'electric-pair)
+                (define-key python-mode-map "\'" 'electric-pair)
+                (define-key python-mode-map "(" 'electric-pair)
+                (define-key python-mode-map "[" 'electric-pair)
+                (define-key python-mode-map "{" 'electric-pair)))
+
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
 (if (file-readable-p  "~/.emacs.d/.ergo/user/user-config.el")
   (progn (load  "~/.emacs.d/.ergo/user/user-config.el")))
+
+(recentf-mode 1)
+
+(save-place-mode 1)
+
+(setq history-length 25)
+(savehist-mode 1)
+
+(global-auto-revert-mode 1)
 
 (require 'org-tempo)
 (add-to-list 'org-structure-template-alist
