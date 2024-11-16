@@ -179,7 +179,7 @@
 ;;               YASNIPPET                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq yas-snippet-dirs '("~/.emacs.d/.ergo/templates/snippets")) ; Snippet storage
+(setq yas-snippet-dirs '("~/.emacs.d/.ergo/snippets")) ; Snippet storage
 (yas-global-mode 1)					       ; Globally Available
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

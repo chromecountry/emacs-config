@@ -283,7 +283,7 @@ Font Settings:
 #+end_src
 
 #+begin_src emacs-lisp
-  (setq yas-snippet-dirs '("~/.emacs.d/.ergo/templates/snippets")) ; Snippet storage
+  (setq yas-snippet-dirs '("~/.emacs.d/.ergo/snippets")) ; Snippet storage
   (yas-global-mode 1)					       ; Globally Available 
 #+end_src
 
@@ -3923,7 +3923,4 @@ Key bindings:
 
 ;;; typescript-mode.el ends here
 #+end_src
-
-
-ssdfsdf
 
