@@ -694,6 +694,17 @@ Custom Key Bindings
                   (define-key python-mode-map "[" 'electric-pair)
                   (define-key python-mode-map "{" 'electric-pair)))
 #+end_src
+** copilot
+Setup github copilot
+#+begin_src emacs-lisp
+  (use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t)
+  (add-hook 'prog-mode-hook 'copilot-mode)
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+#+end_src
+
 ** misc.
 Set emacs browser. This configuration only works on MacOS
 #+begin_src emacs-lisp
