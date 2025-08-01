@@ -83,6 +83,16 @@
 ;;                                STARTUP SETTINGS                                ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; temp workaround for node
+(use-package exec-path-from-shell
+:ensure t
+:config
+(exec-path-from-shell-initialize))
+(setenv "PATH"
+      (concat
+       "/home/alex/.local/bin" path-separator
+       (getenv "PATH")))
+;;
 (setq-default
  inhibit-startup-screen t                         ; Disable start-up screen
  inhibit-startup-message t                        ; Disable startup message
@@ -104,9 +114,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq frame-title-format "%b : %f") 	        ; file : path
-
-(setq initial-frame-alist
-       '((top . 1) (left . 1) (width . 100) (height . 55)))
 
 (global-display-line-numbers-mode t)
 ;; Disable line numbers for some modes
@@ -165,8 +172,8 @@
  (nerd-icons-font-family "Symbols Nerd Font Mono")
 )
 
-(set-frame-font "Droid Sans Mono Slashed 14" nil t)
-(set-face-attribute 'fixed-pitch nil :font "Droid Sans Mono Slashed 14")
+(set-frame-font "Droid Sans Mono Slashed 12" nil t)
+(set-face-attribute 'fixed-pitch nil :font "Droid Sans Mono Slashed 12")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                               ADVANCED SETTINGS                                ;;
@@ -352,6 +359,7 @@ mouse-3: Open %S in another window"
   :commands (magit-status magit-get-current-branch)
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  (setq magit-bury-buffer-function #'magit-mode-quit-window)
 
 (use-package neotree
   :ensure t
@@ -377,12 +385,6 @@ mouse-3: Open %S in another window"
 (add-hook 'org-mode-hook
           (lambda ()
             (add-hook 'after-save-hook #'org-babel-tangle-config)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;             AUTO-COMPLETE              ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(ac-config-default) 			; standard ac config
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                   HELPFUL              ;;
@@ -497,30 +499,100 @@ mouse-3: Open %S in another window"
 
 (global-set-key (kbd "<escape>")   'keyboard-escape-quit)
 
-(defun electric-pair ()
-      "If at end of line, insert character pair without surrounding spaces.
-    Otherwise, just insert the typed character."
-      (interactive)
-      (if (eolp) (let (parens-require-spaces) (insert-pair)) (self-insert-command 1)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                LSP-MODE                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  
-  (add-hook 'python-mode-hook
-                (lambda ()
-                  (define-key python-mode-map "\"" 'electric-pair)
-                  (define-key python-mode-map "\'" 'electric-pair)
-                  (define-key python-mode-map "(" 'electric-pair)
-                  (define-key python-mode-map "[" 'electric-pair)
-                  (define-key python-mode-map "{" 'electric-pair)))
+(use-package lsp-mode
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :hook ((typescript-mode . lsp)
+         (python-mode . lsp))
+  :commands lsp
+  :config
+  (setq lsp-enable-symbol-highlighting t
+        lsp-enable-on-type-formatting t
+        lsp-enable-indentation t
+        lsp-headerline-breadcrumb-enable t
+        lsp-modeline-diagnostics-enable t
+        lsp-completion-enable t))
+
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-position 'at-point
+        lsp-ui-doc-delay 0.5
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-diagnostics t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;               COPILOT                  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package copilot
-:straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
-:ensure t)
-(add-hook 'prog-mode-hook 'copilot-mode)
-(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-(define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :ensure t
+  :init
+  (setq copilot-node-executable "node")
+  :hook ((prog-mode . copilot-mode)
+         (text-mode . copilot-mode))
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("M-TAB" . 'copilot-next-completion)
+              ("M-<tab>" . 'copilot-next-completion))
+  :config
+  (setq copilot-idle-delay 0.1)
+  (define-key global-map (kbd "C-c C-/") 'copilot-complete))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;               WS-BUTLER                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package ws-butler
+  :hook ((text-mode . ws-butler-mode)
+         (prog-mode . ws-butler-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;               COMPANY                  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package company
+  :hook (after-init . global-company-mode)
+  :config
+  (setq company-idle-delay 0.1
+        company-minimum-prefix-length 1
+        company-selection-wrap-around t
+        company-tooltip-align-annotations t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;             SMARTPARENS                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode)
+  :config
+  (require 'smartparens-config))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;         RAINBOW-DELIMITERS            ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;             GIT-GUTTER                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package git-gutter
+  :hook (prog-mode . git-gutter-mode))
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+      browse-url-generic-program "/usr/bin/google-chrome")
 
 (if (file-readable-p  "~/.emacs.d/.ergo/user/user-config.el")
   (progn (load  "~/.emacs.d/.ergo/user/user-config.el")))
