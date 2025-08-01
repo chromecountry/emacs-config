@@ -13,10 +13,21 @@
  ;; If there is more than one, they won't work right.
  '(tabbar-separator '(0.2))
  '(warning-suppress-log-types
-   '(((copilot copilot-no-mode-indent))
+   '(((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-no-mode-indent))
      ((copilot copilot-no-mode-indent))))
  '(warning-suppress-types
-   '(((copilot copilot-no-mode-indent))
+   '(((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-exceeds-max-char))
+     ((copilot copilot-no-mode-indent))
      ((copilot copilot-no-mode-indent)))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
