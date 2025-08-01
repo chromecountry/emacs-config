@@ -148,8 +148,7 @@ Startup Settings and Optimizations:
   (setq-default
    inhibit-startup-screen t                         ; Disable start-up screen
    inhibit-startup-message t                        ; Disable startup message
-   inhibit-startup-echo-area-message t              ; Disable initial echo message
-   initial-scratch-message "")                      ; Empty the initial *scratch* buffer
+   inhibit-startup-echo-area-message t)
 
   (menu-bar-mode -1) 			        ; Disable menu-bar
   (tool-bar-mode -1)	         		; Disable tool-bar
@@ -267,8 +266,9 @@ Documentation.]]
 *** Font
 Font Settings:
 #+begin_src emacs-lisp
-  (set-frame-font "Droid Sans Mono Slashed 12" nil t)
-  (set-face-attribute 'fixed-pitch nil :font "Droid Sans Mono Slashed 12")
+(set-frame-font "DroidSansMNerdFontMono-14" nil t)
+(set-face-attribute 'default nil :font "DroidSansMNerdFontMono-14")
+(set-face-attribute 'fixed-pitch nil :font "DroidSansMNerdFontMono-14")
 #+end_src
 * Further Customization
 #+begin_src emacs-lisp
@@ -493,12 +493,6 @@ Improved searching and file browsing experience.
   :config
   (setq magit-refresh-status-buffer t)
   (setq magit-diff-refine-hunk t))
-#+end_src
-** neotree
-#+begin_src emacs-lisp
-(use-package neotree
-  :ensure t
-  :bind (("C-c t" . neotree-toggle)))
 #+end_src
 ** hl-line
 #+begin_src emacs-lisp
@@ -808,6 +802,45 @@ Custom Key Bindings
 #+begin_src emacs-lisp
 (use-package git-gutter
   :hook (prog-mode . git-gutter-mode))
+#+end_src
+** dashboard
+#+begin_src emacs-lisp
+(use-package all-the-icons
+  :ensure t)
+
+(use-package dashboard
+  :ensure t
+  :init
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "Welcome to Emacs!")
+  (setq dashboard-startup-banner 'official) ; Use official Emacs logo
+  (setq dashboard-center-content t)
+  (setq dashboard-items '((recents . 5)
+                         (projects . 5)
+                         (agenda . 5)))
+  :config
+  (dashboard-setup-startup-hook))
+#+end_src
+** dired-sidebar
+#+begin_src emacs-lisp
+(use-package dired-sidebar
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'icons)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
 #+end_src
 ** misc.
 Set emacs browser. This configuration only works on MacOS
