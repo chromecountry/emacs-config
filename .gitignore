@@ -1,0 +1,8 @@
+elpa/
+elpy/
+eln-cache/
+.packages/
+.litter/
+**/*~undo-tree~
+*~
+config/config.el
