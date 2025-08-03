@@ -721,8 +721,7 @@ Custom Key Bindings
     :ensure t
     :init
     (setq copilot-node-executable "node")
-    :hook ((prog-mode . copilot-mode)
-           (text-mode . copilot-mode))
+    :hook ((prog-mode . copilot-mode))
     :bind (:map copilot-completion-map
                 ("<tab>" . 'copilot-accept-completion)
                 ("TAB" . 'copilot-accept-completion)
